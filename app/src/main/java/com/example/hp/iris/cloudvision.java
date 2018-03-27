@@ -18,6 +18,25 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.rekognition.AmazonRekognitionClient;
+import com.amazonaws.services.rekognition.model.CompareFacesRequest;
+import com.amazonaws.services.rekognition.model.CompareFacesResult;
+import com.amazonaws.services.rekognition.model.S3Object;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.example.hp.iris.PeopleMarkerActivity.PeopleMarkerCamera;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
@@ -34,12 +53,16 @@ import com.google.api.services.vision.v1.model.Feature;
 import com.google.api.services.vision.v1.model.Image;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnInitListener,TextToSpeech.OnUtteranceCompletedListener {
 
@@ -49,7 +72,12 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
     RelativeLayout relative3;
     TextToSpeech tvvs2;
     ArrayList<String> arrayList=new ArrayList<String>();
-    private static final String CLOUD_VISION_API_KEY = "AIzaSyADtvO9_3vK3TkkHW5imY4t25AXaE8Gkis";
+    String callerclass ;
+    ArrayList<String> keylist;
+    AWSCredentials credentials = new BasicAWSCredentials("AKIAJ3CRZTWIQTKUOQUQ","ATsmUAR5+k0O8oM90DzTYcbjyO3MvgGuRmXNvNJW");
+
+    AmazonS3 s3;
+    private static final String CLOUD_VISION_API_KEY = "AIzaSyDmxMoFRxFhwCh3ERm3Syy8znqyN0s9hjI";
     public static final String FILE_NAME = "temp.jpg";
     private static final String ANDROID_CERT_HEADER = "X-Android-Cert";
     private static final String ANDROID_PACKAGE_HEADER = "X-Android-Package";
@@ -65,8 +93,17 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
 
         relative3=(RelativeLayout)findViewById(R.id.relative3);
         img=(ImageView)findViewById(R.id.imageView);
-        image=Uri.parse(getIntent().getStringExtra("uri"));
-        img.setImageURI(image);
+        s3=new AmazonS3Client(credentials);
+        tvvs2=new TextToSpeech(cloudvision.this,cloudvision.this);
+        callerclass=getIntent().getExtras().getString("callerclass");
+        if(callerclass.equals("cloudcamera")){
+            image=Uri.parse(getIntent().getStringExtra("uri"));
+            img.setImageURI(image);
+        }
+        else if(callerclass.equals("PeopleMarkerCamera")){
+            image = Uri.parse(getIntent().getStringExtra("uri"));
+            img.setImageURI(image);
+        }
         bitmap2= BitmapFactory.decodeResource(getResources(),R.drawable.photo_preview);
         tvvs2=new TextToSpeech(cloudvision.this,cloudvision.this);
             try {
@@ -95,11 +132,15 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
             {
 //                Bitmap bitmap =
 //                        scaleBitmapDown(bitmap2,200);
-                try {
-                    callCloudVision(bitmap3);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+               if(callerclass.equals("cloudcamera")){
+                   try {
+                       callCloudVision(bitmap3);
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+               }else if(callerclass.equals("PeopleMarkerCamera")){
+                     new Image_Comparing_Task().execute();
+               }
 
             }
         });
@@ -199,7 +240,8 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
                     Log.d(TAG, "failed to make API request because of other IOException " +
                             e.getMessage());
                 }
-                return "Cloud Vision API request failed. Check logs for details.";
+//                return "Cloud Vision API request failed. Check logs for details.";
+                 return "cloud is on the process due to slower network";
             }
 
             protected void onPostExecute(String result) {
@@ -209,6 +251,7 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
 //                finish();
 //                }
                 System.out.println("Array="+arrayList.size());
+                System.out.println("Arrays+"+arrayList);
                 Iterator<String> iterator=arrayList.iterator();
                 String done="";
                 int flag=0,count=0;
@@ -245,6 +288,26 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
 
             }
         }.execute();
+
+//        new AsyncTask<String, Integer, String>(){
+//
+//            @Override
+//            protected String doInBackground(String... strings) {
+//                File file=new File("/storage/emulated/0/IRIS/MI_08012018_1026.jpg");
+//                byte[] bytes=  new byte[(int) file.length()];
+//                try {
+//                    FileInputStream fis=new FileInputStream(file);
+//                    fis.read(bytes);
+//                    fis.close();
+//                    System.out.println("The bytes stream is : "+bytes);
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//        }.execute();
     }
 
     public Bitmap scaleBitmapDown(Bitmap bitmap, int maxDimension) {
@@ -284,14 +347,13 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
         {
             message += "nothing";
         }
-
+        System.out.println("Result : "+arrayList);
         return message;
     }
     @Override
     protected void onDestroy() {
         if (tvvs2 != null) {
             tvvs2.stop();
-            tvvs2.shutdown();
 
             tvvs2 = null;
         }
@@ -301,7 +363,7 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
     @Override
     public void onInit(int status)
     {
-
+        
 
     }
 
@@ -309,5 +371,96 @@ public class cloudvision extends AppCompatActivity implements  TextToSpeech.OnIn
     public void onUtteranceCompleted(String utteranceId)
     {
 
+    }
+    public class Image_Comparing_Task extends AsyncTask<String, Integer, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+
+
+            keylist = new ArrayList<>();
+
+
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest().withBucketName("irismec");
+            ObjectListing objectListing = s3.listObjects(listObjectsRequest);
+            for(S3ObjectSummary objectSummary:objectListing.getObjectSummaries()){
+                System.out.println("Key :"+objectSummary.getKey().toString());
+                keylist.add(objectSummary.getKey());
+            }
+
+            if(s3.doesObjectExist("irismec","tmp.jpg")){
+                s3.deleteObject("irismec","tmp.jpg");
+            }
+            else{
+                TransferUtility transferUtility =new TransferUtility(s3,getBaseContext());
+                ObjectMetadata metadata=new ObjectMetadata();
+                Map<String, String> usermetadata= new HashMap<>();
+                usermetadata.put("imgRek","tmp");
+
+                metadata.setUserMetadata(usermetadata);
+
+                TransferObserver transferObserver = transferUtility.upload("irismec","tmp.jpg",new File(ImagePathAdapter.path),metadata);
+
+                transferObserver.setTransferListener(new TransferListener() {
+                    @Override
+                    public void onStateChanged(int id, TransferState state) {
+                        System.out.println(" state changed");
+                    }
+
+                    @Override
+                    public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
+
+                        int percentage = (int) (bytesCurrent/bytesTotal)*100;
+                        System.out.println(" onProgressChanged "+percentage);
+
+                        if(percentage == 100){
+                            System.out.println("bow");
+                            new Image_Compare_task().execute();
+                        }
+                    }
+
+                    @Override
+                    public void onError(int id, Exception ex) {
+                        System.out.println(" ERROR "+ex);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(cloudvision.this, "Error in uploading..", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
+
+
+            return null;
+        }
+    }
+    public class Image_Compare_task extends AsyncTask<String, Integer, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            final AmazonRekognitionClient rekognitionClient=new AmazonRekognitionClient(credentials);
+            rekognitionClient.setRegion(Region.getRegion(Regions.US_WEST_2));
+
+            for(int i=0 ; i< keylist.size();i++) {
+                if(keylist.get(i).equals("tmp.jpg")){
+
+                }else{
+                    CompareFacesRequest compareFacesRequest = new CompareFacesRequest()
+                            .withSourceImage(new com.amazonaws.services.rekognition.model.Image().withS3Object(new S3Object().withName("tmp.jpg").withBucket("irismec")))
+                            .withTargetImage(new com.amazonaws.services.rekognition.model.Image().withS3Object(new S3Object().withName(keylist.get(i)).withBucket("irismec")))
+                            .withSimilarityThreshold(78f);
+
+                    CompareFacesResult result = rekognitionClient.compareFaces(compareFacesRequest);
+                    System.out.println("Comparison ; " + result.getFaceMatches().get(0).getSimilarity());
+                }
+
+            }
+            return null;
+
+        }
     }
 }

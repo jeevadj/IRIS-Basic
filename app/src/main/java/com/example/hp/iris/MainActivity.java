@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements  TextToSpeech.OnI
                 else{
                     tvvs.stop();
                 }
-                startActivity(new Intent(MainActivity.this,Main2Activity.class));
+                startActivity(new Intent(MainActivity.this,BlindFit.class));
                 return false;
             }
         });
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements  TextToSpeech.OnI
                 HashMap<String,String> params=new HashMap<String, String>();
                 params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"sampleText");
                 tvvs.speak("vision camera enabled",TextToSpeech.QUEUE_ADD,params);
-                startActivity(new Intent(MainActivity.this,Main2Activity.class));
+                startActivity(new Intent(MainActivity.this,BlindFit.class));
             }
             else{
                 tvvs.stop();
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements  TextToSpeech.OnI
                 HashMap<String,String> params=new HashMap<String, String>();
                 params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"sampleText");
                 tvvs.speak("Option menu is loaded",TextToSpeech.QUEUE_ADD,params);
-                startActivity(new Intent(MainActivity.this,Main2Activity.class));
+                startActivity(new Intent(MainActivity.this,BlindFit.class));
             }
             else{
                 tvvs.stop();
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements  TextToSpeech.OnI
                 e.printStackTrace();
             }
 
-            startActivity(new Intent(MainActivity.this,Main2Activity.class));
+            startActivity(new Intent(MainActivity.this,BlindFit.class));
         }
         speechRecognizer.stopListening();
 

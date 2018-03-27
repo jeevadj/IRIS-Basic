@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
@@ -23,6 +24,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme2">
+        <service
+            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
+            android:enabled="true" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
@@ -37,6 +42,18 @@
             android:name=".Main2Activity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".BlindFit"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
         <activity
             android:name=".barcode"
             android:configChanges="orientation"
@@ -77,7 +94,20 @@
             android:name=".cloudcamera"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".BeforeMessage"></activity>
+        <activity android:name=".BeforeMessage" />
+        <activity
+            android:name=".PeopleMarkerActivity.PeopleSelect"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PeopleMarkerActivity.PeopleMarker"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".PeopleMarkerActivity.PeopleMarkerCamera"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".PeopleMarkerActivity.PeopleIdentifier"></activity>
     </application>
 
 </manifest>

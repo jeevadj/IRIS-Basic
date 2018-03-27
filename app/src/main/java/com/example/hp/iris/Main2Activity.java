@@ -15,12 +15,14 @@ import android.view.WindowManager;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.example.hp.iris.PeopleMarkerActivity.PeopleSelect;
+
 import java.util.HashMap;
 
 import static com.example.hp.iris.MainActivity.c;
 
 public class Main2Activity extends AppCompatActivity implements TextToSpeech.OnInitListener,TextToSpeech.OnUtteranceCompletedListener{
-    CardView barcode,textscanner,facedetect,call,vision,msg;
+    CardView barcode,textscanner,facedetect,call,vision,msg,peopletrack;
     ScrollView scrollView;
     Handler handler=new Handler();
 
@@ -39,6 +41,7 @@ public class Main2Activity extends AppCompatActivity implements TextToSpeech.OnI
         scrollView=(ScrollView)findViewById(R.id.scroll_view);
         vision=(CardView)findViewById(R.id.vision);
         msg=(CardView)findViewById(R.id.Message);
+        peopletrack=(CardView)findViewById(R.id.peopleSelect) ;
         tvvs=new TextToSpeech(Main2Activity.this,Main2Activity.this);
 
         textscanner.setOnClickListener(new View.OnClickListener() {
@@ -268,6 +271,37 @@ public class Main2Activity extends AppCompatActivity implements TextToSpeech.OnI
                 }
 
 
+            }
+        });
+
+        peopletrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!tvvs.isSpeaking()){
+                    HashMap<String,String> params=new HashMap<String, String>();
+                    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"sampleText");
+                    tvvs.speak("People Select Option",TextToSpeech.QUEUE_ADD,params);
+                }
+                else{
+                    tvvs.stop();
+                }
+            }
+        });
+
+        peopletrack.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(!tvvs.isSpeaking()){
+                    HashMap<String,String> params=new HashMap<String, String>();
+                    params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"sampleText");
+                    tvvs.speak("Options Loaded Regrading People Tracking Feature",TextToSpeech.QUEUE_ADD,params);
+                }
+                else{
+                    tvvs.stop();
+                }
+                startActivity(new Intent(Main2Activity.this, PeopleSelect.class));
+
+                return false;
             }
         });
 
