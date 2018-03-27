@@ -43,12 +43,12 @@ public class camera2 extends AppCompatActivity implements TextToSpeech.OnInitLis
         tvvs1=new TextToSpeech(camera2.this,camera2.this);
         //image=Uri.parse(s1);
         try {
-             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),image);
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),image);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Toast.makeText(this, ""+bitmap, Toast.LENGTH_SHORT).show();
-         imageView=(ImageView)findViewById(R.id.imageView);
+        imageView=(ImageView)findViewById(R.id.imageView);
         imageView.setImageURI(image);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +64,7 @@ public class camera2 extends AppCompatActivity implements TextToSpeech.OnInitLis
                     return;
                 }
                 Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-                 sparseArray = faceDetector.detect(frame);
+                sparseArray = faceDetector.detect(frame);
 
                 for(int i=0;i<sparseArray.size();i++)
                 {

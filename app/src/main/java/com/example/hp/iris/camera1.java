@@ -112,6 +112,7 @@ public  class camera1 extends AppCompatActivity implements TextToSpeech.OnInitLi
                     public void onPictureTaken(byte[] bytes) {
                                     detector.release();
                         cameraSource.release();
+                        bytes1=bytes;
 //                       bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 //                        //bmp.compress(Bitmap.CompressFormat.PNG,bytes);
 //                        File dir=
@@ -179,6 +180,7 @@ public  class camera1 extends AppCompatActivity implements TextToSpeech.OnInitLi
                                 imageuri = Uri.parse(path);
                                 Intent intt = new Intent(camera1.this,camera2.class);
                                 //Intent intt = new Intent(camera1.this,cloudvision.class);
+                                intt.putExtra("bytes",bytes1);
                                 intt.putExtra("uri", imageuri.toString());
                                 Toast.makeText(camera1.this, "" + imageuri, Toast.LENGTH_SHORT).show();
                                 startActivity(intt);

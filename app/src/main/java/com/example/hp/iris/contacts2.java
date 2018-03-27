@@ -158,13 +158,7 @@ public class contacts2 extends AppCompatActivity implements TextToSpeech.OnInitL
                     HashMap<String, String> params = new HashMap<String, String>();
                     params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "sampleText");
                     tvvs.speak("Calling" + n, TextToSpeech.QUEUE_ADD, params);
-                } else {
-                    tvvs.stop();
-                }
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(Intent.ACTION_CALL);
+                    Intent intent = new Intent(Intent.ACTION_CALL);
                         intent.setData(Uri.parse("tel:" + ph));
                         if (ActivityCompat.checkSelfPermission(contacts2.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
@@ -175,13 +169,34 @@ public class contacts2 extends AppCompatActivity implements TextToSpeech.OnInitL
                             // to handle the case where the user grants the permission. See the documentation
                             // for ActivityCompat#requestPermissions for more details.
                             startActivity(intent);
-                            return;
+
                         }
 
                         finish();
-
-                    }
-                },2000);
+                } else {
+                    tvvs.stop();
+                }
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Intent intent = new Intent(Intent.ACTION_CALL);
+//                        intent.setData(Uri.parse("tel:" + ph));
+//                        if (ActivityCompat.checkSelfPermission(contacts2.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                            // TODO: Consider calling
+//                            //    ActivityCompat#requestPermissions
+//                            // here to request the missing permissions, and then overriding
+//                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                            //                                          int[] grantResults)
+//                            // to handle the case where the user grants the permission. See the documentation
+//                            // for ActivityCompat#requestPermissions for more details.
+//                            startActivity(intent);
+//                            return;
+//                        }
+//
+//                        finish();
+//
+//                    }
+//                },2000);
 
                 //Toast.makeText(contacts2.this, "Call :"+ ph, Toast.LENGTH_SHORT).show();
                 return false;

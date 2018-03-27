@@ -271,8 +271,14 @@ public class PeopleIdentifier extends AppCompatActivity implements  TextToSpeech
 
 
                                 tvvs2.speak("The person is not an authorised person",TextToSpeech.QUEUE_ADD,params);
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                                 startActivity(new Intent(PeopleIdentifier.this,BlindFit.class));
                                 finish();
+
                             }
                             else{
                                 tvvs2.stop();
